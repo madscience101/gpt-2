@@ -35,6 +35,7 @@ parser.add_argument('--sample_every', metavar='N', type=int, default=100, help='
 parser.add_argument('--sample_length', metavar='TOKENS', type=int, default=1023, help='Sample this many tokens')
 parser.add_argument('--sample_num', metavar='N', type=int, default=1, help='Generate this many samples')
 parser.add_argument('--save_every', metavar='N', type=int, default=1000, help='Write a checkpoint every N steps')
+parser.add_argument('--stop_at', metavar='N', type=int, default=5000, help='Stop training after every N steps')
 
 
 def maketree(path):
@@ -152,7 +153,7 @@ def main():
                         index + 1, text)
                     all_text.append(text)
                     index += 1
-            print(text)
+                print(text)
             maketree(os.path.join(SAMPLE_DIR, args.run_name))
             with open(
                     os.path.join(SAMPLE_DIR, args.run_name,
@@ -166,7 +167,7 @@ def main():
         start_time = time.time()
 
         try:
-            while True:
+            while counter<args.stop_at:
                 if counter % args.save_every == 0:
                     save()
                 if counter % args.sample_every == 0:
