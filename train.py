@@ -37,6 +37,8 @@ parser.add_argument('--sample_num', metavar='N', type=int, default=1, help='Gene
 parser.add_argument('--save_every', metavar='N', type=int, default=1000, help='Write a checkpoint every N steps')
 parser.add_argument('--stop_after', metavar='N', type=int, default=5000, help='Stop training after every N steps')
 
+parser.add_argument('--diverse_samples', action='store_true', 
+    help='If true, each sample in a batch will start with a dofferent word. Ignored if sample_num=1')
 
 def maketree(path):
     try:
@@ -154,6 +156,11 @@ def main():
                     all_text.append(text)
                     index += 1
                 print(text)
+
+                #if diverse_samples flag: sample a new prompt token
+                if args.diverse_samples:
+                    context_tokens = data_sampler.sample(1)
+
             maketree(os.path.join(SAMPLE_DIR, args.run_name))
             with open(
                     os.path.join(SAMPLE_DIR, args.run_name,
