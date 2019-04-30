@@ -46,9 +46,13 @@ def sample_model(
     elif length > hparams.n_ctx:
         raise ValueError("Can't get samples longer than window size: %s" % hparams.n_ctx)
 
+    if seed is None:
+        seed = np.random.randint(0,2**32)
+
     with tf.Session(graph=tf.Graph()) as sess:
         np.random.seed(seed)
         tf.set_random_seed(seed)
+        tf.random.set_random_seed(seed)
 
         output = sample.sample_sequence(
             hparams=hparams, length=length,
@@ -61,6 +65,8 @@ def sample_model(
         ckpt = tf.train.latest_checkpoint(os.path.join('models', model_name))
         saver.restore(sess, ckpt)
 
+        print ("SEED: {}".format(seed))
+
         generated = 0
         while nsamples == 0 or generated < nsamples:
             out = sess.run(output)
@@ -72,4 +78,3 @@ def sample_model(
 
 if __name__ == '__main__':
     fire.Fire(sample_model)
-
